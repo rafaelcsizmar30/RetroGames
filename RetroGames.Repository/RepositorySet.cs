@@ -1,0 +1,19 @@
+namespace RetroGames.Repository;
+
+public class RepositorySet : IRepositorySet
+{
+    public RepositorySet(RepositoryConfig config)
+    {
+        Plataforma = new PlataformaRepository(config);
+        Jogo = new JogoRepository(config);
+        JogoGenero = new JogoGeneroRepository(config);
+        Genero = new GeneroRepository(config);
+        CondicaoJogo = new CondicaoJogoRepository(config);
+    }
+
+    public IPlataformaRepository Plataforma { get; }
+    public IJogoRepository Jogo { get; }
+    public IJogoGeneroRepository JogoGenero { get; }
+    public IGeneroRepository Genero { get; }
+    public ICondicaoJogoRepository CondicaoJogo { get; }
+}
