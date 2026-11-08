@@ -1,0 +1,12 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+
+# Node / front-end
+node_modules/
+dist/
+
+# Configuração local com senhas (nunca versionar)
+.env
