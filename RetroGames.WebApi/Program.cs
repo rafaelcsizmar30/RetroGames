@@ -35,6 +35,7 @@ builder.Services
 builder.Services.AddOpenApi();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+builder.Services.AddAutenticacaoPorCookie();
 var app = builder.Build();
 var emailAdmin = builder.Configuration["AdminInicial:Email"];
 var senhaAdmin = builder.Configuration["AdminInicial:Senha"];
@@ -60,7 +61,8 @@ if (app.Environment.IsDevelopment())
         opcoes.RoutePrefix = "swagger";
     });
 }
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
