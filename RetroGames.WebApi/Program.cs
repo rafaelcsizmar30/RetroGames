@@ -5,6 +5,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RetroGames.WebApi.ActionFilters;
 using RetroGames.WebApi.ApiModels;
+using RetroGames.Services;
 
 DotNetEnv.Env.TraversePath().Load();
 
@@ -35,6 +36,19 @@ builder.Services.AddOpenApi();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 var app = builder.Build();
+var emailAdmin = builder.Configuration["AdminInicial:Email"];
+var senhaAdmin = builder.Configuration["AdminInicial:Senha"];
+if (string.IsNullOrWhiteSpace(emailAdmin) || string.IsNullOrWhiteSpace(senhaAdmin))
+{
+    throw new InvalidOperationException(
+        "O administrador inicial não foi configurado. Defina AdminInicial__Email e AdminInicial__Senha no arquivo .env.");
+}
+
+using (var escopo = app.Services.CreateScope())
+{
+    var autenticacao = escopo.ServiceProvider.GetRequiredService<IAutenticacaoService>();
+    await autenticacao.GarantirAdministradorInicialAsync(emailAdmin, senhaAdmin);
+}
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
