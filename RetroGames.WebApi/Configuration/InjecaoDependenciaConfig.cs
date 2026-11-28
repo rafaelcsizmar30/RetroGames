@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using RetroGames.Model.Model;
 using RetroGames.Repository;
 using RetroGames.Services;
+using RetroGames.WebApi.Services;
 
 namespace RetroGames.WebApi.Configuration;
 
@@ -26,12 +27,13 @@ public static class InjecaoDependenciaConfig
     public static IServiceCollection AddServicosDeNegocio(this IServiceCollection services)
     {
         services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
-
+    
         services.AddScoped<IPlataformaService, PlataformaService>();
         services.AddScoped<IGeneroService, GeneroService>();
         services.AddScoped<ICondicaoJogoService, CondicaoJogoService>();
         services.AddScoped<IJogoService, JogoService>();
         services.AddScoped<IAutenticacaoService, AutenticacaoService>();
+        services.AddScoped<IUsuarioAtualService, UsuarioAtualService>();
 
         return services;
     }

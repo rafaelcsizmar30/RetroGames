@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RetroGames.Services;
 using RetroGames.WebApi.ApiModels;
+using RetroGames.WebApi.Configuration;
 using RetroGames.WebApi.Mappers;
 
 namespace RetroGames.WebApi.Controllers;
@@ -17,13 +19,15 @@ public class JogoController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Listar([FromQuery] ListarJogoRequestApiModel request)
     {
         var pagina = request.Pagina < 1 ? 1 : request.Pagina;
         var tamanho = request.TamanhoPagina < 1 ? 12 : request.TamanhoPagina;
 
         var (itens, total) = await _service.ListarAsync(
-            request.Busca, request.IdPlataforma, request.IdGenero, pagina, tamanho);
+            request.Busca, request.IdPlataforma, request.IdGenero,
+            request.IncluirInativos, pagina, tamanho);
 
         var dados = new PaginaResponseApiModel<ListarJogoResponseApiModel>
         {
@@ -42,6 +46,7 @@ public class JogoController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> ListarPorId(int id)
     {
         var detalhe = await _service.BuscarPorIdAsync(id);
@@ -54,6 +59,7 @@ public class JogoController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = Politicas.Administrador)]
     public async Task<IActionResult> Inserir([FromBody] InserirJogoRequestApiModel request)
     {
         var criado = await _service.InserirAsync(request.ParaModel(), request.IdsGeneros);
@@ -67,6 +73,7 @@ public class JogoController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = Politicas.Administrador)]
     public async Task<IActionResult> Alterar(int id, [FromBody] AlterarJogoRequestApiModel request)
     {
         await _service.AlterarAsync(request.ParaModel(id), request.IdsGeneros);
@@ -80,6 +87,7 @@ public class JogoController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = Politicas.Administrador)]
     public async Task<IActionResult> Excluir(int id)
     {
         await _service.DesativarAsync(id);
